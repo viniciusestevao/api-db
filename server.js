@@ -6,12 +6,23 @@ const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Configurações de acesso ao banco de dados
+const requiredDatabaseVariables = ["DB_USER", "DB_PASSWORD", "DB_SERVER", "DB_NAME"];
+const missingDatabaseVariables = requiredDatabaseVariables.filter(
+  (variable) => !process.env[variable]
+);
+
+if (missingDatabaseVariables.length > 0) {
+  throw new Error(
+    `Missing required database environment variables: ${missingDatabaseVariables.join(", ")}`
+  );
+}
+
+// Database connection settings are supplied by the runtime environment.
 const dbConfig = {
-  user: "hexagon",
-  password: "H3x4g0n0",
-  server: "hexagon.database.windows.net",
-  database: "ProjetoReact",
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  server: process.env.DB_SERVER,
+  database: process.env.DB_NAME,
   options: {
     encrypt: true, // Use esta opção se estiver usando SSL
   },
